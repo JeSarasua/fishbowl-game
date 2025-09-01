@@ -5,7 +5,7 @@ export default function GameBoard({
   board,
   handleClickCB,
 }: {
-  board: (string | null)[];
+  board: string[] | undefined;
   handleClickCB: (index: number) => void;
 }) {
   return (
@@ -17,7 +17,7 @@ export default function GameBoard({
         justifyContent: 'center',
       }}
     >
-      {board.map((cell, index) => (
+      {board?.map((cell, index) => (
         <div
           key={index}
           onClick={() => handleClickCB(index)}

@@ -1,0 +1,17 @@
+{
+  "url": "",
+  "winner": "X",
+  "turn": "O",
+  "board": [
+    "X",
+    "O",
+    null,
+    null,
+    "X",
+    "O",
+    null,
+    null,
+    "X"
+  ],
+  "error": ""
+}
