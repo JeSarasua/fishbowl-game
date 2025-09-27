@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type GameState = {
   url: string;
@@ -29,11 +29,11 @@ export function useWebSocket(url: string) {
     return () => socket.close();
   }, [url]);
 
-  const sendGameState = (msg: string) => {
+  const sendGameState = useCallback((msg: string) => {
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       socketRef.current.send(msg);
     }
-  };
+  }, []);
 
   return { gameState, sendGameState };
 }

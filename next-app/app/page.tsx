@@ -5,9 +5,9 @@ import ProductCard from './components/ProductCard';
 export default function Home() {
   return (
     <main>
-      <h1>hello world</h1>
+      <h1>Welcome to fishbowl</h1>
 
-      <Link href="/game">Game</Link>
+      <Link href="/game">Create a new game</Link>
     </main>
   );
 }
