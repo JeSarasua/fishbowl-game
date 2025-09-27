@@ -10,7 +10,7 @@ const gameRepository = new GameRepository();
 const gameService = new GameService(gameRepository);
 const clients = new Set<WebSocket>();
 const wordRepository = new WordRepository();
-const wordService = new WordService(wordRepository);
+const wordService = new WordService(wordRepository, gameService);
 
 /**
  * Broadcasts game state to all clients when updates occur
@@ -37,6 +37,9 @@ wss.on("connection", (ws: WebSocket) => {
       const data = JSON.parse(message.toString());
 
       switch (data.type) {
+        case MessageType.Start:
+          gameService.startGame();
+          break;
         case MessageType.NewConnection:
           wordService.addWords(data.payload);
           break;

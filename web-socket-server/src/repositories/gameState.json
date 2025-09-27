@@ -1,17 +1,12 @@
 {
   "url": "",
-  "winner": "X",
-  "turn": "O",
-  "board": [
-    "X",
-    "O",
-    null,
-    null,
-    "X",
-    "O",
-    null,
-    null,
-    "X"
-  ],
+  "winner": "",
+  "turn": "Red",
+  "score": {
+    "red": 3,
+    "blue": 5
+  },
+  "word": "orange peels are not to be eaten",
+  "roundEndsAt": "",
   "error": ""
 }

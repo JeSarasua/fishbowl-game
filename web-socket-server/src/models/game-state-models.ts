@@ -1,3 +1,5 @@
+import type { TeamColor } from "../enums/TeamColor";
+
 export type Message = {
   type: string;
   payload: any;
@@ -17,6 +19,9 @@ export type WordTally = {
 export type GameState = {
   url: string;
   winner: string;
-  turn: string;
+  turn: TeamColor | undefined;
+  score: Record<TeamColor, number>;
+  word: string;
+  roundEndsAt: number;
   error: string;
 };

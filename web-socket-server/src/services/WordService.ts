@@ -1,18 +1,13 @@
-// const EMPTY_WORD_STATE = {
-//   words: [
-//     // { name: "bannana", team: "blue" },
-//     // { name: "orange", team: "red" },
-//     // { name: "licorice", team: "red" },
-//     // { name: "dog", team: "red" },
-//     // { name: "apricot", team: "" },
-//   ],
-// };
-
+import type { TeamColor } from "../enums/TeamColor";
 import type { NewConnection, WordTally } from "../models/game-state-models";
 import { WordRepository } from "../repositories/WordRepository";
+import type { GameService } from "./GameService";
 
 export class WordService {
-  constructor(private wordRepository: WordRepository) {}
+  constructor(
+    private wordRepository: WordRepository,
+    private gameService: GameService
+  ) {}
 
   eraseWords() {
     this.wordRepository.updateWords([]);
@@ -24,6 +19,8 @@ export class WordService {
         .getWords()
         .map((w) => (w.name === tally.name ? { ...w, team: tally.team } : w))
     );
+
+    this.gameService.addTally(tally.team as TeamColor);
   }
 
   addWords(newConnection: NewConnection) {
