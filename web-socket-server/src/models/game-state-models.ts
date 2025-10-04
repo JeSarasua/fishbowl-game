@@ -16,12 +16,18 @@ export type WordTally = {
   team: string;
 };
 
+export type ServerToClientMessage = {
+  type: string;
+  payload: GameState;
+};
+
 export type GameState = {
   url: string;
+  isGameLive: boolean;
   winner: string;
   turn: TeamColor | undefined;
   score: Record<TeamColor, number>;
-  word: string;
+  word: string | undefined;
   roundEndsAt: number;
   error: string;
 };

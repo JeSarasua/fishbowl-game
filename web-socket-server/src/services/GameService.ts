@@ -1,5 +1,6 @@
 const EMPTY_GAME_STATE: GameState = {
   url: "",
+  isGameLive: true,
   winner: "",
   turn: undefined,
   score: {
@@ -14,11 +15,15 @@ const EMPTY_GAME_STATE: GameState = {
 import { GameRepository } from "../repositories/GameRepository";
 import { type GameState } from "../models/game-state-models";
 import { TeamColor } from "../enums/TeamColor";
+import type { WordService } from "./WordService";
 
 const ROUND_LENGTH_MS = 30_000;
 
 export class GameService {
-  constructor(private gameRepository: GameRepository) {}
+  constructor(
+    private gameRepository: GameRepository,
+    private wordService: WordService
+  ) {}
 
   startGame() {
     this.newState();
@@ -31,12 +36,15 @@ export class GameService {
   startTurn() {
     const currentState = this.gameRepository.getState();
 
+    const newTurn = this.switchTeam(currentState.turn);
+    const newWord = this.wordService.getTopWord();
+
     this.gameRepository.updateState({
       ...currentState,
-      turn: this.switchTeam(currentState.turn),
+      turn: newTurn,
+      word: newWord,
       roundEndsAt: Date.now() + ROUND_LENGTH_MS,
     });
-    setTimeout(this.suspendTurn, ROUND_LENGTH_MS);
   }
 
   /**
@@ -44,12 +52,6 @@ export class GameService {
    */
   switchTeam(team: string | undefined) {
     return !team || team === TeamColor.BLUE ? TeamColor.RED : TeamColor.BLUE;
-  }
-
-  suspendTurn() {
-    // FIXME: Add break time in-between turns
-
-    this.startTurn();
   }
 
   newState() {

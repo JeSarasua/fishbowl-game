@@ -7,6 +7,7 @@ import { useWebSocket } from './hooks/useWebSocket';
 import ErrorMessage from './CSRComponents/ErrorMessage';
 import InputWords from './CSRComponents/InputWords';
 import InputName from './CSRComponents/InputPlayerName';
+import { Message } from './models/Message';
 
 export default function GamePage() {
   const { gameState, sendGameState } = useWebSocket('ws://localhost:8800');
@@ -31,7 +32,9 @@ export default function GamePage() {
     console.log('HI!');
     if (words && name) {
       setGameStarted(true);
-      sendGameState(JSON.stringify({ type: 'New Connection', payload: { player: name, words } }));
+      sendGameState(
+        JSON.stringify({ type: 'New Connection', payload: { player: name, words } } as Message),
+      );
     }
   }, [words, name, sendGameState]);
 
@@ -63,7 +66,12 @@ export default function GamePage() {
       {
         <RestartButton
           restartClickCB={() => {
-            sendGameState(`restart`);
+            sendGameState(
+              JSON.stringify({
+                type: 'Restart',
+                payload: {},
+              } as Message),
+            );
           }}
         />
       }

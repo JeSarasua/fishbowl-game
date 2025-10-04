@@ -1,13 +1,11 @@
-import type { TeamColor } from "../enums/TeamColor";
 import type { NewConnection, WordTally } from "../models/game-state-models";
 import { WordRepository } from "../repositories/WordRepository";
-import type { GameService } from "./GameService";
+import { WordQueue } from "./WordQueue";
 
 export class WordService {
-  constructor(
-    private wordRepository: WordRepository,
-    private gameService: GameService
-  ) {}
+  constructor(private wordRepository: WordRepository) {}
+
+  private wordQueue = new WordQueue();
 
   eraseWords() {
     this.wordRepository.updateWords([]);
@@ -19,8 +17,6 @@ export class WordService {
         .getWords()
         .map((w) => (w.name === tally.name ? { ...w, team: tally.team } : w))
     );
-
-    this.gameService.addTally(tally.team as TeamColor);
   }
 
   addWords(newConnection: NewConnection) {
@@ -33,5 +29,18 @@ export class WordService {
       ...this.wordRepository.getWords(),
     ];
     this.wordRepository.updateWords(updatedWordTallies);
+  }
+
+  buildWordQueue() {
+    const wordTallies = this.wordRepository.getWords();
+    this.wordQueue.populateWords(
+      wordTallies.map((wordTally) => wordTally.name)
+    );
+  }
+
+  getTopWord() {
+    if (!this.wordQueue.queue.isEmpty()) {
+      return this.wordQueue.queue.dequeue();
+    }
   }
 }

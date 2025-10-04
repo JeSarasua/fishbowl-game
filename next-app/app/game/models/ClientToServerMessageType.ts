@@ -1,4 +1,4 @@
-export enum MessageType {
+export enum ClientToServerMessageType {
   NewConnection = "New Connection",
   Start = "Start",
   Tally = "Tally",

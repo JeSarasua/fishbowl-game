@@ -3,25 +3,51 @@ import { WordService } from "./services/WordService";
 import { WordRepository } from "./repositories/WordRepository";
 import { GameService } from "./services/GameService";
 import { GameRepository } from "./repositories/GameRepository";
-import { MessageType } from "./enums/MessageTypes";
+import { ClientToServerMessageType } from "./enums/ClientToServerMessageType";
+import { ServerToClientMessageType } from "./enums/ServerToClientMessageType";
+import type {
+  ServerToClientMessage,
+  WordTally,
+} from "./models/game-state-models";
+import type { TeamColor } from "./enums/TeamColor";
 
 const wss = new WebSocketServer({ port: 8800 });
 const gameRepository = new GameRepository();
-const gameService = new GameService(gameRepository);
 const clients = new Set<WebSocket>();
 const wordRepository = new WordRepository();
-const wordService = new WordService(wordRepository, gameService);
+const wordService = new WordService(wordRepository);
+const gameService = new GameService(gameRepository, wordService);
+
+const ROUND_LENGTH_MS = 30_000;
 
 /**
  * Broadcasts game state to all clients when updates occur
  */
-// function sendToAllClients(message: string) {
-//   for (const client of clients) {
-//     if (client.readyState === WebSocket.OPEN) {
-//       client.send(message);
-//     }
-//   }
-// }
+function sendGameStateToAllClients() {
+  for (const client of clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(
+        JSON.stringify({
+          type: ServerToClientMessageType.State,
+          payload: gameService.gameState(),
+        } as ServerToClientMessage)
+      );
+    }
+  }
+}
+
+function sendTimeExpiredToAllClients() {
+  for (const client of clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(
+        JSON.stringify({
+          type: ServerToClientMessageType.TimeExpired,
+          payload: gameService.gameState(),
+        } as ServerToClientMessage)
+      );
+    }
+  }
+}
 
 wss.on("connection", (ws: WebSocket) => {
   clients.add(ws);
@@ -37,17 +63,36 @@ wss.on("connection", (ws: WebSocket) => {
       const data = JSON.parse(message.toString());
 
       switch (data.type) {
-        case MessageType.Start:
-          gameService.startGame();
-          break;
-        case MessageType.NewConnection:
+        case ClientToServerMessageType.NewConnection:
           wordService.addWords(data.payload);
+          sendGameStateToAllClients();
           break;
-        case MessageType.Tally:
+        case ClientToServerMessageType.StartGame:
+          wordService.buildWordQueue();
+          gameService.startGame();
+
+          sendGameStateToAllClients();
+          setTimeout(sendTimeExpiredToAllClients, ROUND_LENGTH_MS);
+
+          break;
+        case ClientToServerMessageType.StartTurn:
+          gameService.startTurn();
+          sendGameStateToAllClients();
+          setTimeout(sendTimeExpiredToAllClients, ROUND_LENGTH_MS);
+
+          break;
+        case ClientToServerMessageType.Tally:
           wordService.tallyWord(data.payload);
+          gameService.addTally((data.payload as WordTally).team as TeamColor);
+
+          sendGameStateToAllClients();
           break;
-        case MessageType.Restart:
-          // TODO: Add Restart case
+        case ClientToServerMessageType.Restart:
+          wordService.buildWordQueue();
+          gameService.startGame();
+
+          sendGameStateToAllClients();
+          setTimeout(sendTimeExpiredToAllClients, ROUND_LENGTH_MS);
           break;
         default:
           ws.send(JSON.stringify({ type: "error", payload: "Unknown type" }));
