@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { GameState } from '../models/payload';
 import { ServerToClientDTO } from '../models/dto/server-to-client-dto';
 import { ServerToClientMessageType } from '../models/enums/server-to-client-message-type';

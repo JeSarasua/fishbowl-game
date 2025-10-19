@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import InputWords from './InputWords';
 import InputName from './InputPlayerName';
 import { ClientToServerDTO } from '../models/dto/client-to-server-dto';
@@ -18,9 +18,7 @@ export default function GameLobby() {
   const [name, setName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    console.log('HI!');
     if (words && name) {
-      // setGameStarted(true);
       sendGameState(
         JSON.stringify({
           type: 'New Connection',
