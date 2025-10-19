@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from "fs";
-import { type WordTally } from "../models/game-state-models";
+import { type WordTally } from "../models/payload";
 
 const filePath = "./web-socket-server/src/repositories/wordstate.json";
 

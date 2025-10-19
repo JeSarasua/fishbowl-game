@@ -1,0 +1,13 @@
+{
+  "url": "",
+  "gameStarted": true,
+  "winner": "",
+  "score": {
+    "red": 0,
+    "blue": 0
+  },
+  "word": "hello world",
+  "roundEndsAt": 1760850156935,
+  "error": "",
+  "turn": "red"
+}

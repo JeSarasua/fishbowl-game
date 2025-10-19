@@ -1,18 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-
-type GameState = {
-  url: string;
-  winner: string;
-  turn: string;
-  board: string[];
-  error: string;
-};
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { GameState } from '../models/payload';
+import { ServerToClientDTO } from '../models/dto/server-to-client-dto';
+import { ServerToClientMessageType } from '../models/enums/server-to-client-message-type';
 
 export function useWebSocket(url: string) {
-  const socketRef = useRef<WebSocket | null>(null);
-  const [gameState, setGameState] = useState<GameState | null>(null);
+  const socketRef = useRef<WebSocket>(undefined);
+  const [gameState, setGameState] = useState<GameState | undefined>(undefined);
 
   useEffect(() => {
     const socket = new WebSocket(url);
@@ -20,13 +15,24 @@ export function useWebSocket(url: string) {
 
     socket.onopen = () => console.log('Websocket connected');
     socket.onmessage = (e) => {
-      const data: GameState = JSON.parse(e.data);
-      console.log('📩', e.data);
-      setGameState(data);
+      const dto = JSON.parse(e.data) as ServerToClientDTO;
+      switch (dto.type) {
+        case ServerToClientMessageType.NewConnection:
+          break;
+
+        case ServerToClientMessageType.Game:
+          console.log('📩', dto.payload);
+          setGameState(dto.payload);
+        // TODO: figure out how to use react context with provider so I can set gameStarted across my application
+        case ServerToClientMessageType.TimeExpired:
+          break;
+
+        case ServerToClientMessageType.Restart:
+          setGameState(dto.payload);
+          break;
+      }
     };
     socket.onclose = () => console.log('Websocket disconnected');
-
-    return () => socket.close();
   }, [url]);
 
   const sendGameState = useCallback((msg: string) => {

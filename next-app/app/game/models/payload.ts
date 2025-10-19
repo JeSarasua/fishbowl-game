@@ -1,10 +1,8 @@
-import type { TeamColor } from "../enums/TeamColor";
+import { TeamColor } from './enums/team-color';
 
-export type Message = {
-  type: string;
-  payload: any;
-};
-
+/**
+ * Various payload types for DTOs
+ */
 export type NewConnection = {
   player: string;
   words: string[];
@@ -16,14 +14,9 @@ export type WordTally = {
   team: string;
 };
 
-export type ServerToClientMessage = {
-  type: string;
-  payload: GameState;
-};
-
 export type GameState = {
   url: string;
-  isGameLive: boolean;
+  gameStarted: boolean;
   winner: string;
   turn: TeamColor | undefined;
   score: Record<TeamColor, number>;

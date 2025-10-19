@@ -1,6 +1,6 @@
 const EMPTY_GAME_STATE: GameState = {
   url: "",
-  isGameLive: true,
+  gameStarted: false,
   winner: "",
   turn: undefined,
   score: {
@@ -13,8 +13,8 @@ const EMPTY_GAME_STATE: GameState = {
 };
 
 import { GameRepository } from "../repositories/GameRepository";
-import { type GameState } from "../models/game-state-models";
-import { TeamColor } from "../enums/TeamColor";
+import { type GameState } from "../models/payload";
+import { TeamColor } from "../models/enums/team-color";
 import type { WordService } from "./WordService";
 
 const ROUND_LENGTH_MS = 30_000;
@@ -26,7 +26,7 @@ export class GameService {
   ) {}
 
   startGame() {
-    this.newState();
+    this.newState({ gameStarted: true });
     this.startTurn();
   }
 
@@ -54,7 +54,11 @@ export class GameService {
     return !team || team === TeamColor.BLUE ? TeamColor.RED : TeamColor.BLUE;
   }
 
-  newState() {
+  newState(overides: Partial<GameState> = {}) {
+    this.gameRepository.updateState({ ...EMPTY_GAME_STATE, ...overides });
+  }
+
+  deleteState() {
     this.gameRepository.updateState(EMPTY_GAME_STATE);
   }
 

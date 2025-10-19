@@ -1,4 +1,4 @@
-import type { NewConnection, WordTally } from "../models/game-state-models";
+import type { NewConnection, WordTally } from "../models/payload";
 import { WordRepository } from "../repositories/WordRepository";
 import { WordQueue } from "./WordQueue";
 

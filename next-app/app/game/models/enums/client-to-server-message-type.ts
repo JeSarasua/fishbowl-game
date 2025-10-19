@@ -1,6 +1,7 @@
 export enum ClientToServerMessageType {
   NewConnection = "New Connection",
-  Start = "Start",
+  StartGame = "Start Game",
+  StartTurn = "Start Turn",
   Tally = "Tally",
   Restart = "Restart",
 }
