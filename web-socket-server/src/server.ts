@@ -2,14 +2,14 @@ import { WebSocketServer, type RawData } from "ws";
 import { ClientToServerMessageType } from "./models/enums/client-to-server-message-type";
 import type { TeamColor } from "./models/enums/team-color";
 import type { ClientToServerDTO } from "./models/dto/client-to-server-dto";
-import { ROOT_PROVIDER } from "./providers/root-provider";
+import { rootProvider } from "./providers/root-provider";
 
 const wss = new WebSocketServer({ port: 8800 });
 const ROUND_LENGTH_MS = 30_000;
 
 wss.on("connection", (ws: WebSocket) => {
-  ROOT_PROVIDER.clientService.clients.add(ws);
-  const gameStateAtConnection = ROOT_PROVIDER.gameService.gameState();
+  rootProvider.clientService.clients.add(ws);
+  const gameStateAtConnection = rootProvider.gameService.gameState();
 
   if (Object.keys(gameStateAtConnection).length > 0) {
     ws.send(JSON.stringify(gameStateAtConnection));
@@ -28,24 +28,24 @@ wss.on("connection", (ws: WebSocket) => {
   });
 
   ws.on("close", () => {
-    ROOT_PROVIDER.clientService.clients.delete(ws);
+    rootProvider.clientService.clients.delete(ws);
   });
 });
 
 function handleClientMessage(dto: ClientToServerDTO) {
   switch (dto.type) {
     case ClientToServerMessageType.NewConnection:
-      ROOT_PROVIDER.wordService.addWords(dto.payload);
-      ROOT_PROVIDER.clientService.sendNewConnectionToAllClients();
+      rootProvider.wordService.addWords(dto.payload);
+      rootProvider.clientService.sendNewConnectionToAllClients();
       break;
 
     case ClientToServerMessageType.StartGame:
-      ROOT_PROVIDER.wordService.buildWordQueue();
-      ROOT_PROVIDER.gameService.startGame();
+      rootProvider.wordService.buildWordQueue();
+      rootProvider.gameService.startGame();
 
-      ROOT_PROVIDER.clientService.sendGameStateToAllClients();
+      rootProvider.clientService.sendGameStateToAllClients();
       setTimeout(
-        ROOT_PROVIDER.clientService.sendTimeExpiredToAllClients,
+        rootProvider.clientService.sendTimeExpiredToAllClients,
         ROUND_LENGTH_MS
       );
       break;
@@ -57,17 +57,17 @@ function handleClientMessage(dto: ClientToServerDTO) {
 
     //   break;
     case ClientToServerMessageType.Tally:
-      ROOT_PROVIDER.wordService.tallyWord(dto.payload);
-      ROOT_PROVIDER.gameService.addTally(dto.payload.team as TeamColor);
+      rootProvider.wordService.tallyWord(dto.payload);
+      rootProvider.gameService.addTally(dto.payload.team as TeamColor);
 
-      ROOT_PROVIDER.clientService.sendGameStateToAllClients();
+      rootProvider.clientService.sendGameStateToAllClients();
       break;
 
     case ClientToServerMessageType.Restart:
-      ROOT_PROVIDER.wordService.eraseWords();
-      ROOT_PROVIDER.gameService.deleteState();
+      rootProvider.wordService.eraseWords();
+      rootProvider.gameService.deleteState();
 
-      ROOT_PROVIDER.clientService.sendRestartToAllClients();
+      rootProvider.clientService.sendRestartToAllClients();
       break;
     default:
     // ws.send(JSON.stringify({ type: "error", payload: "Unknown type" }));

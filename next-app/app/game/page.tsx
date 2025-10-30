@@ -5,7 +5,7 @@ import { useWebSocket } from './hooks/useWebSocket';
 import ErrorMessage from './CSRComponents/ErrorMessage';
 import { ClientToServerDTO } from './models/dto/client-to-server-dto';
 import GameLobby from './CSRComponents/GameLobby';
-import Game from './CSRComponents/Game';
+import Game from './CSRComponents/Game/Game';
 import RestartButton from './CSRComponents/RestartButton';
 import { ClientToServerMessageType } from './models/enums/client-to-server-message-type';
 import { GameStateContext } from './contexts/GameStateContext';

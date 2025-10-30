@@ -1,6 +1,5 @@
 import type { ServerToClientDTO } from "../models/dto/server-to-client-dto";
 import { ServerToClientMessageType } from "../models/enums/server-to-client-message-type";
-import { ROOT_PROVIDER } from "../providers/root-provider";
 import type { GameService } from "./GameService";
 
 export class ClientService {

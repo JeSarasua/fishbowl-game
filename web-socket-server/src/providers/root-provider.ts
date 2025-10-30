@@ -43,4 +43,4 @@ export class RootProvider {
   }
 }
 
-export const ROOT_PROVIDER = new RootProvider();
+export const rootProvider = new RootProvider();
