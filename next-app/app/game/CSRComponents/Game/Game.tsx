@@ -4,23 +4,37 @@ import { motion, useAnimation, useMotionValue, useTransform, animate } from 'fra
 import { useGameStateContext } from '../../contexts/GameStateContext';
 import Instructions from './Instructions';
 import SwipeableCard from './SwipeableCard';
+import { WordTally } from '../../models/payload';
 
-export default function Game() {
+export default function Game({
+  tallyWordCB: tallyWordCB,
+}: {
+  tallyWordCB: (tally: WordTally) => void;
+}) {
   const gameState = useGameStateContext();
   const [timeLeft, setTimeLeft] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const controls = useAnimation();
 
   // Motion value for continuous animation
   const progress = useMotionValue(1);
   const width = useTransform(progress, (p) => `${p * 100}%`);
 
+  const [correctGuess, setCorrectGuess] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (correctGuess === null) return; // skip null
+
+    if (gameState && gameState.word && gameState.turn) {
+      tallyWordCB({
+        name: gameState.word,
+        team: gameState.turn,
+        correct: correctGuess,
+      });
+    }
+  }, [correctGuess]);
+
   // Countdown timer logic
   useEffect(() => {
     if (!gameState?.roundEndsAt) return;
-
-    const totalSeconds = Math.ceil((gameState.roundEndsAt - Date.now()) / 1000);
-    setDuration(totalSeconds);
 
     // Start smooth animation of the progress bar
     progress.set(1);
@@ -54,7 +68,7 @@ export default function Game() {
       {/* Timer */}
       <div className="text-2xl font-semibold text-gray-700 mb-4 mt-6">⏱️ {timeLeft}s</div>
 
-      <SwipeableCard word={gameState.word} />
+      <SwipeableCard word={gameState.word} correctGuess={setCorrectGuess} />
       <Instructions />
     </div>
   );

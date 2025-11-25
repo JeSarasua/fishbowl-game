@@ -3,6 +3,7 @@ import { ClientToServerMessageType } from "./models/enums/client-to-server-messa
 import type { TeamColor } from "./models/enums/team-color";
 import type { ClientToServerDTO } from "./models/dto/client-to-server-dto";
 import { rootProvider } from "./providers/root-provider";
+import type { WordTally } from "./models/payload";
 
 const wss = new WebSocketServer({ port: 8800 });
 const ROUND_LENGTH_MS = 30_000;
@@ -57,9 +58,13 @@ function handleClientMessage(dto: ClientToServerDTO) {
 
     //   break;
     case ClientToServerMessageType.Tally:
-      rootProvider.wordService.tallyWord(dto.payload);
-      rootProvider.gameService.addTally(dto.payload.team as TeamColor);
+      if ((dto.payload as WordTally).correct) {
+        console.log("CORRECT!");
+        rootProvider.wordService.tallyWord(dto.payload);
+        rootProvider.gameService.addTally(dto.payload.team as TeamColor);
+      }
 
+      rootProvider.gameService.nextWord();
       rootProvider.clientService.sendGameStateToAllClients();
       break;
 

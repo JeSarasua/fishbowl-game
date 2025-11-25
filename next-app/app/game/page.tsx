@@ -9,6 +9,7 @@ import Game from './CSRComponents/Game/Game';
 import RestartButton from './CSRComponents/RestartButton';
 import { ClientToServerMessageType } from './models/enums/client-to-server-message-type';
 import { GameStateContext } from './contexts/GameStateContext';
+import { WordTally } from './models/payload';
 
 export default function GamePage() {
   const { gameState, sendGameState } = useWebSocket('ws://localhost:8800');
@@ -27,6 +28,15 @@ export default function GamePage() {
     );
   };
 
+  const handleWordTally = (tally: WordTally) => {
+    sendGameState(
+      JSON.stringify({
+        type: ClientToServerMessageType.Tally,
+        payload: tally,
+      } as ClientToServerDTO),
+    );
+  };
+
   useEffect(() => {
     console.log('we got new state!');
     if (gameState && Object.keys(gameState).length > 0) {
@@ -40,7 +50,7 @@ export default function GamePage() {
         <h1>Tic Tac Toe</h1>
         {gameStarted ? (
           <>
-            <Game />
+            <Game tallyWordCB={handleWordTally} />
             <RestartButton restartClickCB={handleRestart} />
           </>
         ) : (

@@ -48,6 +48,20 @@ export class GameService {
   }
 
   /**
+   * Gets a new word for the same turn.
+   */
+  nextWord() {
+    const currentState = this.gameRepository.getState();
+
+    const newWord = this.wordService.getTopWord();
+
+    this.gameRepository.updateState({
+      ...currentState,
+      word: newWord,
+    });
+  }
+
+  /**
    * Switches turn. If team is empty (new game) then default to red.
    */
   switchTeam(team: string | undefined) {

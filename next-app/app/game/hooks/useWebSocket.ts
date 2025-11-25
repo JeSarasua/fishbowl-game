@@ -23,7 +23,11 @@ export function useWebSocket(url: string) {
         case ServerToClientMessageType.Game:
           console.log('📩', dto.payload);
           setGameState(dto.payload);
-        // TODO: figure out how to use react context with provider so I can set gameStarted across my application
+
+        case ServerToClientMessageType.NextWord:
+          console.log('📩', dto.payload);
+          setGameState(dto.payload);
+
         case ServerToClientMessageType.TimeExpired:
           break;
 

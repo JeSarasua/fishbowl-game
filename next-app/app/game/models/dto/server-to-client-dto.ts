@@ -7,6 +7,7 @@ import type { ServerToClientMessageType } from '../enums/server-to-client-messag
  */
 export type ServerToClientDTO =
   | MessageDTO<ServerToClientMessageType.Game, GameState>
+  | MessageDTO<ServerToClientMessageType.NextWord, GameState>
   | MessageDTO<ServerToClientMessageType.TimeExpired, GameState>
   | MessageDTO<ServerToClientMessageType.NewConnection, {}>
   | MessageDTO<ServerToClientMessageType.Restart, GameState>;

@@ -27,6 +27,19 @@ export class ClientService {
     }
   }
 
+  sendNextWordToAllClients() {
+    for (const client of this.clients) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: ServerToClientMessageType.NextWord,
+            payload: this._gameService.gameState(),
+          } as ServerToClientDTO)
+        );
+      }
+    }
+  }
+
   sendNewConnectionToAllClients() {
     for (const client of this.clients) {
       if (client.readyState === WebSocket.OPEN) {

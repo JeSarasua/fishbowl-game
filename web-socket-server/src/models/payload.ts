@@ -10,8 +10,8 @@ export type NewConnection = {
 
 export type WordTally = {
   name: string;
-  player: string;
   team: string;
+  correct: boolean;
 };
 
 export type GameState = {

@@ -1,16 +1,25 @@
 'use client';
 
 import { motion, useAnimation } from 'framer-motion';
+import { useEffect } from 'react';
 
-export default function SwipeableCard({ word }: { word: string | undefined }) {
+export default function SwipeableCard({
+  word,
+  correctGuess,
+}: {
+  word: string | undefined;
+  correctGuess: (correct: boolean) => void;
+}) {
   const controls = useAnimation();
 
-  const handleSwipe = (direction: 'left' | 'right') => {
-    if (direction === 'right') alert('✅ Correct!');
-    else alert('❌ Incorrect!');
-  };
+  useEffect(() => {
+    // Reset card position and opacity whenever word changes
+    controls.start({ x: 0, opacity: 1 });
+  }, [word]);
+
   return (
     <div>
+      <h1>{word}</h1>
       <motion.div
         className="bg-white shadow-lg rounded-2xl p-10 w-72 h-48 flex items-center justify-center text-3xl font-bold text-gray-800"
         drag="x"
@@ -21,10 +30,10 @@ export default function SwipeableCard({ word }: { word: string | undefined }) {
 
           if (offset > 100 || velocity > 500) {
             controls.start({ x: 500, opacity: 0, transition: { duration: 0.3 } });
-            handleSwipe('right');
+            correctGuess(true);
           } else if (offset < -100 || velocity < -500) {
             controls.start({ x: -500, opacity: 0, transition: { duration: 0.3 } });
-            handleSwipe('left');
+            correctGuess(false);
           } else {
             controls.start({ x: 0 });
           }
