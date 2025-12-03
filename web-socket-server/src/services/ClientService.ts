@@ -3,7 +3,7 @@ import { ServerToClientMessageType } from "../models/enums/server-to-client-mess
 import type { GameService } from "./GameService";
 
 export class ClientService {
-  public clients: Set<WebSocket>;
+  private clients: Set<WebSocket>;
   private _gameService: GameService;
 
   constructor(gameService: GameService) {
@@ -11,10 +11,26 @@ export class ClientService {
     this.clients = new Set<WebSocket>();
   }
 
+  getClients() {
+    return this.clients;
+  }
+
+  addClient(ws: WebSocket) {
+    this.clients.add(ws);
+  }
+
+  deleteClient(ws: WebSocket) {
+    this.clients.delete(ws);
+  }
+
+  numClients(): number {
+    return this.clients.size;
+  }
+
   /**
    * Broadcasts game state to all clients when updates occur
    */
-  sendGameStateToAllClients() {
+  sendGameStateToAllClients(): void {
     for (const client of this.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
@@ -27,7 +43,7 @@ export class ClientService {
     }
   }
 
-  sendNextWordToAllClients() {
+  sendNextWordToAllClients(): void {
     for (const client of this.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
@@ -40,7 +56,7 @@ export class ClientService {
     }
   }
 
-  sendNewConnectionToAllClients() {
+  sendNewConnectionToAllClients(): void {
     for (const client of this.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
@@ -53,7 +69,7 @@ export class ClientService {
     }
   }
 
-  sendTimeExpiredToAllClients() {
+  sendTimeExpiredToAllClients(): void {
     for (const client of this.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
@@ -66,7 +82,7 @@ export class ClientService {
     }
   }
 
-  sendRestartToAllClients() {
+  sendRestartToAllClients(): void {
     for (const client of this.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(

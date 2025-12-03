@@ -21,14 +21,10 @@ export function useWebSocket(url: string) {
           break;
 
         case ServerToClientMessageType.Game:
-          console.log('📩', dto.payload);
-          setGameState(dto.payload);
-
         case ServerToClientMessageType.NextWord:
+        case ServerToClientMessageType.TimeExpired:
           console.log('📩', dto.payload);
           setGameState(dto.payload);
-
-        case ServerToClientMessageType.TimeExpired:
           break;
 
         case ServerToClientMessageType.Restart:

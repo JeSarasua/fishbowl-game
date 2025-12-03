@@ -7,10 +7,6 @@ import StartButton from './StartButton';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { ClientToServerMessageType } from '../models/enums/client-to-server-message-type';
 
-// show current players in the game facilitate players picking/switching
-// teams. UI should prevent players from switching teams if team count would
-// be reduced to 0 show words added count
-// Start button
 export default function GameLobby() {
   const { gameState, sendGameState } = useWebSocket('ws://localhost:8800');
 
@@ -21,7 +17,7 @@ export default function GameLobby() {
     if (words && name) {
       sendGameState(
         JSON.stringify({
-          type: 'New Connection',
+          type: ClientToServerMessageType.NewConnection,
           payload: { player: name, words },
         } as ClientToServerDTO),
       );

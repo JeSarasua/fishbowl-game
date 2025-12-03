@@ -9,7 +9,7 @@ const wss = new WebSocketServer({ port: 8800 });
 const ROUND_LENGTH_MS = 30_000;
 
 wss.on("connection", (ws: WebSocket) => {
-  rootProvider.clientService.clients.add(ws);
+  rootProvider.clientService.addClient(ws);
   const gameStateAtConnection = rootProvider.gameService.gameState();
 
   if (Object.keys(gameStateAtConnection).length > 0) {
@@ -29,7 +29,7 @@ wss.on("connection", (ws: WebSocket) => {
   });
 
   ws.on("close", () => {
-    rootProvider.clientService.clients.delete(ws);
+    rootProvider.clientService.deleteClient(ws);
   });
 });
 
@@ -46,7 +46,7 @@ function handleClientMessage(dto: ClientToServerDTO) {
 
       rootProvider.clientService.sendGameStateToAllClients();
       setTimeout(
-        rootProvider.clientService.sendTimeExpiredToAllClients,
+        () => rootProvider.clientService.sendTimeExpiredToAllClients,
         ROUND_LENGTH_MS
       );
       break;
